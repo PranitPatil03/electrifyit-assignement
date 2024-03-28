@@ -1,12 +1,11 @@
 import "./App.css";
-import { Button } from "./components/ui/button";
+import DashBoard from "./pages/DashBoard";
 
 function App() {
   return (
-    <>
-      <h1>Jello</h1>
-      <Button>Click me</Button>
-    </>
+    <div className="w-full h-screen">
+      <DashBoard></DashBoard>
+    </div>
   );
 }
 
