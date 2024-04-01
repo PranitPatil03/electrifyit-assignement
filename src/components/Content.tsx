@@ -2,6 +2,7 @@ import {
   ArrowBigDownDashIcon,
   ArrowDown,
   BellIcon,
+  CalendarIcon,
   ChevronDown,
 } from "lucide-react";
 import {
@@ -13,8 +14,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import React from "react";
+import { DateRange } from "react-day-picker";
+import { addDays, format } from "date-fns";
 
-const Content = () => {
+const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(2022, 0, 20),
+    to: addDays(new Date(2022, 0, 20), 20),
+  });
   return (
     <div className="flex flex-col text-white mx-6 my-5 px-4 py-2 w-full h-screen">
       <div className="flex gap-4 w-full justify-between items-center">
@@ -65,13 +81,16 @@ const Content = () => {
                   <ChevronDown className="text-sm mr-6"></ChevronDown>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuContent className="w-[175px] bg-[#1D1D26] border-none text-white mt-2">
+                <DropdownMenuItem className="cursor-pointer">
+                  Total Miles Driven
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Energy Consumption
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Cost Analysis
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -79,17 +98,23 @@ const Content = () => {
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
                 <div className="flex flex-row gap-20">
-                  <p className="">Frequency</p>
+                  <p className="">Reports</p>
                   <ChevronDown className="text-sm mr-6"></ChevronDown>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuContent className="w-[175px] bg-[#1D1D26] border-none text-white mt-2">
+                <DropdownMenuItem className="cursor-pointer">
+                  Daily
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Weekly
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Monthly
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  Yearly
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -97,17 +122,49 @@ const Content = () => {
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
                 <div className="flex flex-row gap-20">
-                  <p className="">Time Frame</p>
+                  <p className="">Reports</p>
                   <ChevronDown className="text-sm mr-6"></ChevronDown>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuContent className="w-[175px] bg-[#1D1D26] border-none text-white mt-2">
+                <div className={cn("grid gap-2", className)}>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="date"
+                        variant={"outline"}
+                        className={cn(
+                          "w-[300px] justify-start text-left font-normal",
+                          !date && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {date?.from ? (
+                          date.to ? (
+                            <>
+                              {format(date.from, "LLL dd, y")} -{" "}
+                              {format(date.to, "LLL dd, y")}
+                            </>
+                          ) : (
+                            format(date.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={date?.from}
+                        selected={date}
+                        onSelect={setDate}
+                        numberOfMonths={2}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
