@@ -13,7 +13,7 @@ const DashBoard = () => {
         defaultSize={12}
         minSize={12}
         maxSize={12}
-        className="bg-[#1D1D26]"
+        className="bg-[#1D1D26] "
       >
         <SideBar></SideBar>
       </ResizablePanel>
