@@ -1,10 +1,4 @@
-import {
-  ArrowBigDownDashIcon,
-  ArrowDown,
-  BellIcon,
-  CalendarIcon,
-  ChevronDown,
-} from "lucide-react";
+import { BellIcon, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,14 +18,12 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { DateRange } from "react-day-picker";
-import { addDays, format } from "date-fns";
+import { addDays } from "date-fns";
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
