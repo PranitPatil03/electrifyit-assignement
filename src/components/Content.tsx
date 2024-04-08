@@ -16,10 +16,10 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
-
+import axios from "axios";
 import {
   Table,
   TableBody,
@@ -28,15 +28,39 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ReportData } from "./data";
 
-const invoices = ReportData;
+type item = {
+  licensePlate: string;
+  make: string;
+  vin: string;
+  model: string;
+  carType: string;
+  date: string;
+  milesDriven: number;
+};
 
 const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(2022, 0, 20),
     to: addDays(new Date(2022, 0, 20), 20),
   });
+
+  const [invoices, setInvoices] = useState<item[]>();
+
+  const fetchTableData = async (reportName: string) => {
+    const {
+      data: { data: tableData },
+    } = await axios.post(
+      import.meta.env.VITE_SERVER_DOMAIN + "/report/fetch-table-data",
+      { reportName: reportName }
+    );
+
+    console.log("Line", tableData);
+    setInvoices(tableData);
+  };
+
+  console.log("Line 1212", invoices);
+
   return (
     <div className="flex flex-col text-white mx-6 my-5 px-4 py-2 w-full h-screen">
       <div className="flex gap-4 w-full justify-between items-center">
@@ -89,13 +113,22 @@ const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-[175px] bg-[#1D1D26] border-none text-white mt-2">
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => fetchTableData("Total Miles Driven")}
+                  >
                     Total Miles Driven
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => fetchTableData("Energy Consumption")}
+                  >
                     Energy Consumption
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => fetchTableData("Cost Analysis")}
+                  >
                     Cost Analysis
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -186,19 +219,27 @@ const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {invoices.map((invoice) => (
-              <TableRow key={invoice.LicensePlate}>
-                <TableCell className="font-medium">
-                  {invoice.LicensePlate}
-                </TableCell>
-                <TableCell className="font-medium">{invoice.Make}</TableCell>
-                <TableCell>{invoice.VIN}</TableCell>
-                <TableCell>{invoice.Model}</TableCell>
-                <TableCell>{invoice.Type}</TableCell>
-                <TableCell>{invoice.Date}</TableCell>
-                <TableCell>{invoice.MilesDriven}</TableCell>
-              </TableRow>
-            ))}
+            {invoices ? (
+              invoices?.map((invoice) => (
+                <TableRow key={invoice.licensePlate}>
+                  <TableCell className="font-medium">
+                    {invoice.licensePlate}
+                  </TableCell>
+                  <TableCell className="font-medium">{invoice.make}</TableCell>
+                  <TableCell>{invoice.vin}</TableCell>
+                  <TableCell>{invoice.model}</TableCell>
+                  <TableCell>{invoice.carType}</TableCell>
+                  <TableCell>{invoice.date}</TableCell>
+                  <TableCell>{invoice.milesDriven}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <>
+                <h2 className="flex text-2xl font-mono font-medium w-full jus">
+                  No Report Table Data Available
+                </h2>
+              </>
+            )}
           </TableBody>
         </Table>
       </div>
