@@ -28,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatDate } from "@/common/service";
 
 type item = {
   licensePlate: string;
@@ -41,8 +42,8 @@ type item = {
 
 const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: new Date(2024, 2, 10),
+    to: addDays(new Date(2024, 2, 20), 5),
   });
 
   const [invoices, setInvoices] = useState<item[]>();
@@ -55,11 +56,10 @@ const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
       { reportName: reportName }
     );
 
-    console.log("Line", tableData);
+    setInvoices([]);
+    console.log("line 59", tableData);
     setInvoices(tableData);
   };
-
-  console.log("Line 1212", invoices);
 
   return (
     <div className="flex flex-col text-white mx-6 my-5 px-4 py-2 w-full h-screen">
@@ -179,11 +179,15 @@ const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
                     align="start"
                   >
                     <Calendar
-                      defaultMonth={date?.from}
+                      initialFocus
+                      mode="range"
                       selected={date}
                       onSelect={setDate}
                       numberOfMonths={2}
                       className="bg-[#1D1D26] text-white"
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
                     />
                   </PopoverContent>
                 </Popover>
@@ -206,42 +210,48 @@ const Content = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
       </div>
 
       <div className="mr-8">
-        <Table className="mt-10">
-          <TableHeader>
-            <TableRow>
-              <TableHead>License Plate</TableHead>
-              <TableHead>Make</TableHead>
-              <TableHead>VIN</TableHead>
-              <TableHead>Model</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Miles Driven</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {invoices ? (
-              invoices?.map((invoice) => (
-                <TableRow key={invoice.licensePlate}>
-                  <TableCell className="font-medium">
-                    {invoice.licensePlate}
-                  </TableCell>
-                  <TableCell className="font-medium">{invoice.make}</TableCell>
-                  <TableCell>{invoice.vin}</TableCell>
-                  <TableCell>{invoice.model}</TableCell>
-                  <TableCell>{invoice.carType}</TableCell>
-                  <TableCell>{invoice.date}</TableCell>
-                  <TableCell>{invoice.milesDriven}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <>
-                <h2 className="flex text-2xl font-mono font-medium w-full jus">
-                  No Report Table Data Available
-                </h2>
-              </>
-            )}
-          </TableBody>
-        </Table>
+        {invoices ? (
+          <Table className="mt-10">
+            <TableHeader>
+              <TableRow className=" font-bold font-mono text-base">
+                <TableHead className="w-[100px]">License Plate</TableHead>
+                <TableHead className="w-[100px]">Make</TableHead>
+                <TableHead className="w-[100px]">VIN</TableHead>
+                <TableHead className="w-[200px]">Model</TableHead>
+                <TableHead className="w-[100px]">Type</TableHead>
+                <TableHead className="w-[100px]">Date</TableHead>
+                <TableHead className="w-[150px]">Miles Driven</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoices ? (
+                invoices?.map((invoice) => (
+                  <TableRow key={invoice.vin} className="font-medium font-mono">
+                    <TableCell className="">{invoice.licensePlate}</TableCell>
+                    <TableCell className="">{invoice.make}</TableCell>
+                    <TableCell className="">{invoice.vin}</TableCell>
+                    <TableCell className="">{invoice.model}</TableCell>
+                    <TableCell className="">{invoice.carType}</TableCell>
+                    <TableCell className="">{invoice.date}</TableCell>
+                    <TableCell className="">{invoice.milesDriven}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <>
+                  <h2 className="flex text-2xl font-mono font-medium w-full jus">
+                    No Report Table Data Available
+                  </h2>
+                </>
+              )}
+            </TableBody>
+          </Table>
+        ) : (
+          <>
+            <h2 className="flex text-2xl font-mono font-medium w-full justify-center items-center h-[200px]">
+              No Report Table Data Available
+            </h2>
+          </>
+        )}
       </div>
     </div>
   );
